@@ -18,6 +18,7 @@ const PizzaBlock = (props) => {
                 <ul>
                     {props.types.map((item) => (
                         <li
+                            key={item}
                             onClick={() => {
                                 setActivePizzaType(item);
                             }}
@@ -30,6 +31,7 @@ const PizzaBlock = (props) => {
                 <ul>
                     {props.sizes.map((item, index) => (
                         <li
+                            key={index}
                             onClick={() => {
                                 setActivePizzaSize(index);
                             }}
