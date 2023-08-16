@@ -2,7 +2,7 @@ import styles from "./NotFoundBlock.module.scss";
 
 const NotFoundBlock = () => {
     return (
-        <div className={styles.root}>
+        <div className={`container ${styles.root}`}>
             <h1>
                 <span> &#128532;</span>
                 <br />
