@@ -1,10 +1,13 @@
 import { useState } from "react";
 
-const Sort = () => {
+const Sort = ({ value, onChangeSort }) => {
     const [isOpenPopup, setIsOpenPopup] = useState(false);
-    const [activeListIndex, setActiveListIndex] = useState(0);
 
-    const list = ["популярности", "цене", "алфавиту"];
+    const list = [
+        { name: "популярности", sortProperty: "rating" },
+        { name: "цене", sortProperty: "price" },
+        { name: "алфавиту", sosortPropertyrt: "title" },
+    ];
 
     return (
         <div className="sort">
@@ -27,24 +30,26 @@ const Sort = () => {
                         setIsOpenPopup(!isOpenPopup);
                     }}
                 >
-                    {list[activeListIndex]}
+                    {value.name}
                 </span>
             </div>
             {isOpenPopup && (
                 <div className="sort__popup">
                     <ul>
-                        {list.map((item, index) => (
+                        {list.map((obj, index) => (
                             <li
                                 key={index}
                                 onClick={() => {
-                                    setActiveListIndex(index);
+                                    onChangeSort(obj);
                                     setIsOpenPopup(false);
                                 }}
                                 className={
-                                    activeListIndex === index ? "active" : ""
+                                    value.sortProperty === obj.sortProperty
+                                        ? "active"
+                                        : ""
                                 }
                             >
-                                {item}
+                                {obj.name}
                             </li>
                         ))}
                     </ul>
