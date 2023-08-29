@@ -4,7 +4,7 @@ import Sort from "../сomponents/Sort";
 import Skeleton from "./../сomponents/PizzaBlock/Skeleton";
 import PizzaBlock from "./../сomponents/PizzaBlock/index";
 
-const Home = () => {
+const Home = (props) => {
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -13,6 +13,16 @@ const Home = () => {
         name: "популярности",
         sortProperty: "rating",
     });
+
+    let items2 = [];
+    items2 = items.filter(
+        (obj) => obj.title.toLowerCase().indexOf(props.filterText) >= 0
+        // return obj.title === props.filterText;
+        // return obj.title.toLowerCase().indexOf(props.filterText) >= 0;
+    );
+
+    console.log(props.filterText);
+    console.log(items2);
 
     useEffect(() => {
         setIsLoading(true);
@@ -30,8 +40,9 @@ const Home = () => {
                 setIsLoading(false);
             });
         window.scrollTo(0, 0);
-    }, [categoryId, sortType]);
+    }, [categoryId, sortType, props.filterText]);
 
+    useEffect(() => {});
     return (
         <div className="container">
             <div className="content__top">
@@ -47,7 +58,7 @@ const Home = () => {
                     ? [...new Array(6)].map((_, index) => (
                           <Skeleton key={index} />
                       ))
-                    : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
+                    : items2.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
             </div>
         </div>
     );
