@@ -15,7 +15,7 @@ const Header = (props) => {
                         </div>
                     </div>
                 </Link>
-                <Search setFilterText={props.setFilterText} />
+                <Search filterText={props.filterText} setFilterText={props.setFilterText} />
                 <div className="header__cart">
                     <Link to="/cart" className="button button--cart">
                         <span>520 ₽</span>

@@ -11,7 +11,7 @@ function App() {
 
     return (
         <div className="wrapper">
-            <Header setFilterText={setFilterText} />
+            <Header filterText={filterText} setFilterText={setFilterText} />
             <div className="content">
                 <div className="container">
                     <Routes>
