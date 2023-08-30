@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Categories from "../сomponents/Categories";
 import Sort from "../сomponents/Sort";
 import Skeleton from "./../сomponents/PizzaBlock/Skeleton";
 import PizzaBlock from "./../сomponents/PizzaBlock/index";
 import Pagination from "../сomponents/Pagination/Pagination";
+import { SearchContext } from "../App";
 
-const Home = (props) => {
+const Home = () => {
+  const { searchText } = useContext(SearchContext);
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categoryId, setCategoryId] = useState(0);
@@ -17,13 +19,13 @@ const Home = (props) => {
 
   //   let items2 = [];
   //   items2 = items.filter((obj) =>
-  //     obj.title.toLowerCase().includes(props.filterText.toLowerCase())
+  //     obj.title.toLowerCase().includes(searchText.toLowerCase())
   //   );
 
   useEffect(() => {
     setIsLoading(true);
     const category = categoryId > 0 ? `category=${categoryId}` : "";
-    const search = props.filterText ? `search=${props.filterText}` : "";
+    const search = searchText ? `search=${searchText}` : "";
 
     fetch(
       `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currnetPage}&limit=4&
@@ -37,7 +39,7 @@ const Home = (props) => {
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
-  }, [categoryId, sortType, props.filterText, currnetPage]);
+  }, [categoryId, sortType, searchText, currnetPage]);
 
   useEffect(() => {});
   return (
