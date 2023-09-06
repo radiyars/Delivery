@@ -1,37 +1,40 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Categories from "../сomponents/Categories";
 import Pagination from "../сomponents/Pagination/Pagination";
 import Sort from "../сomponents/Sort";
 import Skeleton from "./../сomponents/PizzaBlock/Skeleton";
 import PizzaBlock from "./../сomponents/PizzaBlock/index";
+import axios from "axios";
+import { setCurrnetPage } from "../redux/slices/filterSlice";
 
 const Home = () => {
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { categoryId, sortType, searchText } = useSelector(
+    const { categoryId, sortType, searchText, currnetPage } = useSelector(
         (state) => state.filter
     );
-    const [currnetPage, setCurrentPage] = useState(1);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         setIsLoading(true);
         const category = categoryId > 0 ? `category=${categoryId}` : "";
         const search = searchText ? `search=${searchText}` : "";
 
-        fetch(
-            `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currnetPage}&limit=4&
+        axios
+            .get(
+                `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currnetPage}&limit=4&
 			${category}&sortBy=${sortType.sortProperty}&${search}`
-        )
+            )
             .then((res) => {
-                return res.json();
-            })
-            .then((arr) => {
-                setItems(arr);
+                setItems(res.data);
                 setIsLoading(false);
             });
-        window.scrollTo(0, 0);
     }, [categoryId, sortType, searchText, currnetPage]);
+
+    const onChangePage = (number) => {
+        dispatch(setCurrnetPage(number));
+    };
 
     return (
         <div className="container">
@@ -47,12 +50,7 @@ const Home = () => {
                       ))
                     : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
             </div>
-            <Pagination
-                onChangePage={(number) => {
-                    setCurrentPage(number);
-                }}
-                currentPage={currnetPage}
-            />
+            <Pagination onChangePage={onChangePage} currentPage={currnetPage} />
         </div>
     );
 };
