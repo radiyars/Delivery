@@ -1,14 +1,17 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "../../redux/slices/cartSlice";
 import { ReactComponent as PlusSvg } from "./../../assets/img/plus.svg";
 
+const pizzaTypes = ["тонкое", "традиционное"];
+
 const PizzaBlock = (props) => {
     const dispatch = useDispatch();
+    const cartItem = useSelector((state) =>
+        state.cart.items.find((obj) => obj.id === props.id)
+    );
     const [activePizzaType, setActivePizzaType] = useState(0);
     const [activePizzaSize, setActivePizzaSize] = useState(0);
-
-    const pizzaTypes = ["тонкое", "традиционное"];
 
     const onClickAdd = () => {
         const item = {
@@ -16,7 +19,7 @@ const PizzaBlock = (props) => {
             title: props.title,
             price: props.price,
             imageUrl: props.imageUrl,
-            type: activePizzaType,
+            type: pizzaTypes[activePizzaType],
             size: activePizzaSize,
         };
 
@@ -72,7 +75,7 @@ const PizzaBlock = (props) => {
                     >
                         <PlusSvg />
                         <span>Добавить</span>
-                        <i>{0}</i>
+                        {cartItem ? <i>{cartItem.count}</i> : <></>}
                     </button>
                 </div>
             </div>
