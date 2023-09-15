@@ -8,7 +8,7 @@ import Categories from "../сomponents/Categories";
 import Pagination from "../сomponents/Pagination/Pagination";
 import Sort, { sortList } from "../сomponents/Sort";
 import Skeleton from "./../сomponents/PizzaBlock/Skeleton";
-import PizzaBlock from "./../сomponents/PizzaBlock/index";
+import PizzaBlock from "./../сomponents/PizzaBlock/PizzaBlock";
 
 const Home = () => {
     const navigate = useNavigate();
