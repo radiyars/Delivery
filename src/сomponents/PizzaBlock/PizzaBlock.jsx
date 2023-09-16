@@ -20,7 +20,7 @@ const PizzaBlock = (props) => {
             price: props.price,
             imageUrl: props.imageUrl,
             type: pizzaTypes[activePizzaType],
-            size: activePizzaSize,
+            size: props.sizes[activePizzaSize],
         };
 
         dispatch(addItem(item));

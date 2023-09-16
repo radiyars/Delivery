@@ -4,10 +4,24 @@ import CartItem from "../сomponents/CartItem";
 import { ReactComponent as CartSvg } from "./../assets/img/cart.svg";
 import { ReactComponent as LeftArrow } from "./../assets/img/grey-arrow-left.svg";
 import { ReactComponent as TrashSvg } from "./../assets/img/trash.svg";
+import { clearItems } from "../redux/slices/cartSlice";
+import CartEmpty from "../сomponents/CartEmpty";
 
 const Cart = () => {
     const dispatch = useDispatch();
-    const items = useSelector((state) => state.cart.items);
+    const { items, totalCount, totalPrice } = useSelector(
+        (state) => state.cart
+    );
+
+    const onClickClear = () => {
+        if (window.confirm("Очистить корзину?")) {
+            dispatch(clearItems());
+        }
+    };
+
+    if (!totalPrice) {
+        return <CartEmpty />;
+    }
 
     return (
         <div className=" container container--cart">
@@ -16,7 +30,7 @@ const Cart = () => {
                     <h2 className="content__title">
                         <CartSvg /> Корзина
                     </h2>
-                    <div className="cart__clear">
+                    <div onClick={onClickClear} className="cart__clear">
                         <TrashSvg />
                         <span>Очистить корзину</span>
                     </div>
@@ -30,11 +44,11 @@ const Cart = () => {
                     <div className="cart__bottom-details">
                         <span>
                             {" "}
-                            Всего пицц: <b>3 шт.</b>{" "}
+                            Всего пицц: <b>{totalCount} шт.</b>{" "}
                         </span>
                         <span>
                             {" "}
-                            Сумма заказа: <b>900 ₽</b>{" "}
+                            Сумма заказа: <b>{totalPrice} ₽</b>{" "}
                         </span>
                     </div>
                     <div className="cart__bottom-buttons">

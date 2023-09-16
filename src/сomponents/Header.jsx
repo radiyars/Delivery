@@ -5,11 +5,7 @@ import { ReactComponent as CartSvg } from "./../assets/img/cart.svg";
 import { useSelector } from "react-redux";
 
 const Header = () => {
-    const { items, totalPrice } = useSelector((state) => state.cart);
-
-    const totalCount = items.reduce((sum, item) => {
-        return sum + item.count;
-    }, 0);
+    const { totalPrice, totalCount } = useSelector((state) => state.cart);
 
     return (
         <div className="header">
