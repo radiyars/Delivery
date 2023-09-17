@@ -10,7 +10,7 @@ export const sortList = [
 
 const Sort = () => {
     const dispatch = useDispatch();
-    const sortType = useSelector((state) => state.filter.sortType);
+    const sortType = useSelector((state) => state.filters.sortType);
     const [isOpenPopup, setIsOpenPopup] = useState(false);
     const sortRef = useRef();
 

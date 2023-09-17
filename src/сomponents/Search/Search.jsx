@@ -8,7 +8,7 @@ import debounce from "lodash.debounce";
 
 const Search = () => {
     const [inputText, setInputText] = useState("");
-    const searchText = useSelector((state) => state.filter.searchText);
+    const searchText = useSelector((state) => state.filters.searchText);
     const dispatch = useDispatch();
     const inputRef = useRef();
 

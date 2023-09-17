@@ -1,14 +1,14 @@
-import axios from "axios";
 import qs from "qs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setcurrentPage, setFilters } from "../redux/slices/filterSlice";
+import { setFilters, setcurrentPage } from "../redux/slices/filterSlice";
+import { fetchItems } from "../redux/slices/itemsSlice";
 import Categories from "../сomponents/Categories";
 import Pagination from "../сomponents/Pagination/Pagination";
 import Sort, { sortList } from "../сomponents/Sort";
-import Skeleton from "./../сomponents/PizzaBlock/Skeleton";
 import PizzaBlock from "./../сomponents/PizzaBlock/PizzaBlock";
+import Skeleton from "./../сomponents/PizzaBlock/Skeleton";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -16,26 +16,25 @@ const Home = () => {
     const isSearch = useRef(false);
     const isMounted = useRef(false);
 
-    const [items, setItems] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const { categoryId, sortType, searchText, currentPage } = useSelector(
-        (state) => state.filter
+        (state) => state.filters
     );
+    const { items, status } = useSelector((state) => state.items);
 
-    const fetchPizzas = () => {
-        setIsLoading(true);
+    const getItems = async () => {
         const category = categoryId > 0 ? `category=${categoryId}` : "";
         const search = searchText ? `search=${searchText}` : "";
 
-        axios
-            .get(
-                `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currentPage}&limit=4&
-    		${category}&sortBy=${sortType.sortProperty}&${search}`
-            )
-            .then((res) => {
-                setItems(res.data);
-                setIsLoading(false);
-            });
+        dispatch(
+            fetchItems({
+                currentPage,
+                category,
+                sortProperty: sortType.sortProperty,
+                search,
+            })
+        );
+
+        window.scrollTo(0, 0);
     };
 
     // Если это не первый рендер, то подготоавливаем адресную строку с помощью библиотеки "qs"
@@ -67,14 +66,12 @@ const Home = () => {
     // При первом рендере запрашиваем пиццы.
     useEffect(() => {
         // Если пришил параметры из адресной строки, то ничего не делай
-        if (!isSearch.current) {
-            // Запрос данных при изменении параметров фильтрации
-            fetchPizzas();
-        }
+        // if (!isSearch.current) {
+        // Запрос данных при изменении параметров фильтрации
+        getItems();
+        // }
 
         isSearch.current = false;
-
-        window.scrollTo(0, 0);
     }, [categoryId, sortType.sortProperty, searchText, currentPage]);
 
     const onChangePage = (number) => {
@@ -88,13 +85,23 @@ const Home = () => {
                 <Sort />
             </div>
             <h2 className="content__title">Все пиццы</h2>
-            <div className="content__items">
-                {isLoading
-                    ? [...new Array(6)].map((_, index) => (
-                          <Skeleton key={index} />
-                      ))
-                    : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
-            </div>
+
+            {status === "error" ? (
+                <div className="content__error-info">
+                    <h2>Произошла ошибка😕</h2>
+                    <p>Не удалось загрузить товары</p>
+                </div>
+            ) : (
+                <div className="content__items">
+                    {status === "loading"
+                        ? [...new Array(6)].map((_, index) => (
+                              <Skeleton key={index} />
+                          ))
+                        : items.map((obj) => (
+                              <PizzaBlock key={obj.id} {...obj} />
+                          ))}
+                </div>
+            )}
             <Pagination onChangePage={onChangePage} currentPage={currentPage} />
         </div>
     );
