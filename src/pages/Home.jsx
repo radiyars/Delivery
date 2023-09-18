@@ -2,109 +2,109 @@ import qs from "qs";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFilters, setcurrentPage } from "../redux/slices/filterSlice";
+import {
+  selectFilters,
+  selectItemsData,
+  setFilters,
+  setcurrentPage,
+} from "../redux/slices/filterSlice";
 import { fetchItems } from "../redux/slices/itemsSlice";
 import Categories from "../сomponents/Categories";
 import Pagination from "../сomponents/Pagination/Pagination";
 import Sort, { sortList } from "../сomponents/Sort";
-import PizzaBlock from "./../сomponents/PizzaBlock/PizzaBlock";
-import Skeleton from "./../сomponents/PizzaBlock/Skeleton";
+import PizzaBlock from "../сomponents/ItemBlock/ItemBlock";
+import Skeleton from "../сomponents/ItemBlock/Skeleton";
 
 const Home = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const isSearch = useRef(false);
-    const isMounted = useRef(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isSearch = useRef(false);
+  const isMounted = useRef(false);
 
-    const { categoryId, sortType, searchText, currentPage } = useSelector(
-        (state) => state.filters
+  const { categoryId, sortType, searchText, currentPage } =
+    useSelector(selectFilters);
+  const { items, status } = useSelector(selectItemsData);
+
+  const getItems = async () => {
+    const category = categoryId > 0 ? `category=${categoryId}` : "";
+    const search = searchText ? `search=${searchText}` : "";
+
+    dispatch(
+      fetchItems({
+        currentPage,
+        category,
+        sortProperty: sortType.sortProperty,
+        search,
+      })
     );
-    const { items, status } = useSelector((state) => state.items);
 
-    const getItems = async () => {
-        const category = categoryId > 0 ? `category=${categoryId}` : "";
-        const search = searchText ? `search=${searchText}` : "";
+    window.scrollTo(0, 0);
+  };
 
-        dispatch(
-            fetchItems({
-                currentPage,
-                category,
-                sortProperty: sortType.sortProperty,
-                search,
-            })
-        );
+  // Если это не первый рендер, то подготоавливаем адресную строку с помощью библиотеки "qs"
+  useEffect(() => {
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sortType.sortProperty,
+        categoryId,
+        currentPage: currentPage,
+      });
+      navigate(`?${queryString}`);
+    }
+    // Первый рендер - ок!
+    isMounted.current = true;
+  }, [categoryId, sortType.sortProperty, currentPage]);
 
-        window.scrollTo(0, 0);
-    };
+  // Если при первом рендере получили данные из адресной строчки, то парсим параметры филтрации в редакс
+  useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+      const sort = sortList.find(
+        (obj) => obj.sortProperty === params.sortProperty
+      );
+      dispatch(setFilters({ ...params, sort }));
+    }
+    isSearch.current = true;
+  }, []);
 
-    // Если это не первый рендер, то подготоавливаем адресную строку с помощью библиотеки "qs"
-    useEffect(() => {
-        if (isMounted.current) {
-            const queryString = qs.stringify({
-                sortProperty: sortType.sortProperty,
-                categoryId,
-                currentPage: currentPage,
-            });
-            navigate(`?${queryString}`);
-        }
-        // Первый рендер - ок!
-        isMounted.current = true;
-    }, [categoryId, sortType.sortProperty, currentPage]);
+  // При первом рендере запрашиваем пиццы.
+  useEffect(() => {
+    // Если пришил параметры из адресной строки, то ничего не делай
+    // if (!isSearch.current) {
+    // Запрос данных при изменении параметров фильтрации
+    getItems();
+    // }
 
-    // Если при первом рендере получили данные из адресной строчки, то парсим параметры филтрации в редакс
-    useEffect(() => {
-        if (window.location.search) {
-            const params = qs.parse(window.location.search.substring(1));
-            const sort = sortList.find(
-                (obj) => obj.sortProperty === params.sortProperty
-            );
-            dispatch(setFilters({ ...params, sort }));
-        }
-        isSearch.current = true;
-    }, []);
+    isSearch.current = false;
+  }, [categoryId, sortType.sortProperty, searchText, currentPage]);
 
-    // При первом рендере запрашиваем пиццы.
-    useEffect(() => {
-        // Если пришил параметры из адресной строки, то ничего не делай
-        // if (!isSearch.current) {
-        // Запрос данных при изменении параметров фильтрации
-        getItems();
-        // }
+  const onChangePage = (number) => {
+    dispatch(setcurrentPage(number));
+  };
 
-        isSearch.current = false;
-    }, [categoryId, sortType.sortProperty, searchText, currentPage]);
+  return (
+    <div className="container">
+      <div className="content__top">
+        <Categories />
+        <Sort />
+      </div>
+      <h2 className="content__title">Все пиццы</h2>
 
-    const onChangePage = (number) => {
-        dispatch(setcurrentPage(number));
-    };
-
-    return (
-        <div className="container">
-            <div className="content__top">
-                <Categories />
-                <Sort />
-            </div>
-            <h2 className="content__title">Все пиццы</h2>
-
-            {status === "error" ? (
-                <div className="content__error-info">
-                    <h2>Произошла ошибка😕</h2>
-                    <p>Не удалось загрузить товары</p>
-                </div>
-            ) : (
-                <div className="content__items">
-                    {status === "loading"
-                        ? [...new Array(6)].map((_, index) => (
-                              <Skeleton key={index} />
-                          ))
-                        : items.map((obj) => (
-                              <PizzaBlock key={obj.id} {...obj} />
-                          ))}
-                </div>
-            )}
-            <Pagination onChangePage={onChangePage} currentPage={currentPage} />
+      {status === "error" ? (
+        <div className="content__error-info">
+          <h2>Произошла ошибка😕</h2>
+          <p>Не удалось загрузить товары</p>
         </div>
-    );
+      ) : (
+        <div className="content__items">
+          {status === "loading"
+            ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
+            : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
+        </div>
+      )}
+      <Pagination onChangePage={onChangePage} currentPage={currentPage} />
+    </div>
+  );
 };
 
 export default Home;
