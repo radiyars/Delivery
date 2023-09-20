@@ -1,7 +1,7 @@
 import qs from "qs";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   selectFilters,
   selectItemsData,
@@ -99,7 +99,11 @@ const Home = () => {
         <div className="content__items">
           {status === "loading"
             ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
-            : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
+            : items.map((obj) => (
+                <Link key={obj.id} to={`/item/${obj.id}`}>
+                  <PizzaBlock {...obj} />
+                </Link>
+              ))}
         </div>
       )}
       <Pagination onChangePage={onChangePage} currentPage={currentPage} />
