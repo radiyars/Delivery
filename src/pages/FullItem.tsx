@@ -1,10 +1,14 @@
 import axios from "axios";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const FullItem = () => {
-  const [item, setItem] = useState();
+const FullItem: React.FC = () => {
+  const [item, setItem] = useState<{
+    imageUrl: string;
+    title: string;
+    price: number;
+  }>();
   const { id } = useParams();
   const navigate = useNavigate();
 
