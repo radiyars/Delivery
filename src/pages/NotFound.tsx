@@ -1,7 +1,7 @@
 import NotFoundBlock from "../сomponents/NotFoundBlock";
 
-const NotFound = () => {
-    return <NotFoundBlock />;
+const NotFound: React.FC = () => {
+  return <NotFoundBlock />;
 };
 
 export default NotFound;

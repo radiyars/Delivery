@@ -15,7 +15,7 @@ import Sort, { sortList } from "../сomponents/Sort";
 import PizzaBlock from "../сomponents/ItemBlock/ItemBlock";
 import Skeleton from "../сomponents/ItemBlock/Skeleton";
 
-const Home = () => {
+const Home: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isSearch = useRef(false);
@@ -30,6 +30,7 @@ const Home = () => {
     const search = searchText ? `search=${searchText}` : "";
 
     dispatch(
+      // @ts-ignore
       fetchItems({
         currentPage,
         category,
@@ -78,8 +79,8 @@ const Home = () => {
     isSearch.current = false;
   }, [categoryId, sortType.sortProperty, searchText, currentPage]);
 
-  const onChangePage = (number) => {
-    dispatch(setcurrentPage(number));
+  const onChangePage = (page: number) => {
+    dispatch(setcurrentPage(page));
   };
 
   return (
@@ -99,7 +100,7 @@ const Home = () => {
         <div className="content__items">
           {status === "loading"
             ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
-            : items.map((obj) => (
+            : items.map((obj: any) => (
                 <Link key={obj.id} to={`/item/${obj.id}`}>
                   <PizzaBlock {...obj} />
                 </Link>
