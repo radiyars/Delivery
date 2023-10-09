@@ -18,7 +18,7 @@ const Search: React.FC = () => {
     inputRef.current?.focus();
   };
 
-  const onChangeInput = (event: any) => {
+  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(event.target.value);
     updateSearchText(event.target.value);
   };

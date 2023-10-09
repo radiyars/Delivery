@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectSort, setSortType } from "../redux/slices/filterSlice";
 import { ReactComponent as ArrowTopSvg } from "./../assets/img/arrow-top.svg";
 
-type SortItemType = {
+type SortItemProps = {
   name: string;
   sortProperty: string;
 };
 
-export const sortList: SortItemType[] = [
+export const sortList: SortItemProps[] = [
   { name: "популярности", sortProperty: "rating" },
   { name: "цене", sortProperty: "price" },
   { name: "алфавиту", sortProperty: "title" },
@@ -20,14 +20,17 @@ const Sort = () => {
   const [isOpenPopup, setIsOpenPopup] = useState(false);
   const sortRef = useRef<HTMLDivElement>(null);
 
-  const onClickSortItem = (obj: SortItemType) => {
+  const onClickSortItem = (obj: SortItemProps) => {
     dispatch(setSortType(obj));
     setIsOpenPopup(false);
   };
 
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (!event.composedPath().includes(sortRef.current)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      const _event = event as MouseEvent & {
+        path: Node[];
+      };
+      if (sortRef.current && !_event.path.includes(sortRef.current)) {
         setIsOpenPopup(false);
       }
     };
