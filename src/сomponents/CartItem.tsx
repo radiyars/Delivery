@@ -28,11 +28,11 @@ const CartItem: React.FC<CartItemProps> = ({
   };
 
   const onClickMinus = () => {
-    dispatch(minusItem({ id }));
+    dispatch(minusItem(id));
   };
 
   const onClickRemove = () => {
-    dispatch(removeItem({ id }));
+    dispatch(removeItem(id));
   };
 
   return (

@@ -1,20 +1,25 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, selectCartItemById } from "../../redux/slices/cartSlice";
+import {
+  CartItem,
+  addItem,
+  selectCartItemById,
+} from "../../redux/slices/cartSlice";
 import { ReactComponent as PlusSvg } from "./../../assets/img/plus.svg";
 
-const pizzaTypes = ["тонкое", "традиционное"];
+const itemTypes = ["тонкое", "традиционное"];
 
-type PizzaBlockProps = {
+type ItemBlockProps = {
   id: string;
   title: string;
   price: number;
   imageUrl: string;
+  count: number;
   sizes: number[];
   types: number[];
 };
 
-const PizzaBlock: React.FC<PizzaBlockProps> = ({
+const ItemBlock: React.FC<ItemBlockProps> = ({
   id,
   title,
   price,
@@ -24,17 +29,18 @@ const PizzaBlock: React.FC<PizzaBlockProps> = ({
 }) => {
   const dispatch = useDispatch();
   const cartItem = useSelector(selectCartItemById(id));
-  const [activePizzaType, setActivePizzaType] = useState(0);
-  const [activePizzaSize, setActivePizzaSize] = useState(0);
+  const [activeItemType, setActiveItemType] = useState(0);
+  const [activeItemSize, setActiveItemSize] = useState(0);
 
   const onClickAdd = () => {
-    const item = {
+    const item: CartItem = {
       id,
       title,
       price,
       imageUrl,
-      type: pizzaTypes[activePizzaType],
-      size: sizes[activePizzaSize],
+      count: 0,
+      type: itemTypes[activeItemType],
+      size: sizes[activeItemSize],
     };
 
     dispatch(addItem(item));
@@ -51,11 +57,11 @@ const PizzaBlock: React.FC<PizzaBlockProps> = ({
               <li
                 key={item}
                 onClick={() => {
-                  setActivePizzaType(item);
+                  setActiveItemType(item);
                 }}
-                className={activePizzaType === item ? "active" : ""}
+                className={activeItemType === item ? "active" : ""}
               >
-                {pizzaTypes[item]}
+                {itemTypes[item]}
               </li>
             ))}
           </ul>
@@ -64,9 +70,9 @@ const PizzaBlock: React.FC<PizzaBlockProps> = ({
               <li
                 key={index}
                 onClick={() => {
-                  setActivePizzaSize(index);
+                  setActiveItemSize(index);
                 }}
-                className={activePizzaSize === index ? "active" : ""}
+                className={activeItemSize === index ? "active" : ""}
               >
                 {item} см.
               </li>
@@ -89,4 +95,4 @@ const PizzaBlock: React.FC<PizzaBlockProps> = ({
   );
 };
 
-export default PizzaBlock;
+export default ItemBlock;

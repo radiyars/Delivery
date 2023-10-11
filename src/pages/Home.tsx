@@ -12,7 +12,7 @@ import { fetchItems } from "../redux/slices/itemsSlice";
 import Categories from "../сomponents/Categories";
 import Pagination from "../сomponents/Pagination/Pagination";
 import Sort, { sortList } from "../сomponents/Sort";
-import PizzaBlock from "../сomponents/ItemBlock/ItemBlock";
+import ItemBlock from "../сomponents/ItemBlock/ItemBlock";
 import Skeleton from "../сomponents/ItemBlock/Skeleton";
 
 const Home: React.FC = () => {
@@ -102,7 +102,7 @@ const Home: React.FC = () => {
             ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
             : items.map((obj: any) => (
                 <Link key={obj.id} to={`/item/${obj.id}`}>
-                  <PizzaBlock {...obj} />
+                  <ItemBlock {...obj} />
                 </Link>
               ))}
         </div>

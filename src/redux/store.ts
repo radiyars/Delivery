@@ -4,9 +4,11 @@ import cart from "./slices/cartSlice";
 import items from "./slices/itemsSlice";
 
 export const store = configureStore({
-    reducer: {
-        filters,
-        cart,
-        items,
-    },
+  reducer: {
+    filters,
+    cart,
+    items,
+  },
 });
+
+export type RootState = ReturnType<typeof store.getState>;
