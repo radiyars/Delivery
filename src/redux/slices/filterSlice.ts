@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 type Sort = {
@@ -27,22 +27,35 @@ export const filterSlice = createSlice({
   name: "filters",
   initialState,
   reducers: {
-    setCategoryId(state, action) {
+    setCategoryId(state, action: PayloadAction<number>) {
       state.categoryId = action.payload;
     },
-    setSortType(state, action) {
+
+    setSortType(state, action: PayloadAction<Sort>) {
       state.sort = action.payload;
     },
-    setSearchText(state, action) {
+
+    setSearchText(state, action: PayloadAction<string>) {
       state.searchText = action.payload;
     },
-    setcurrentPage(state, action) {
+
+    setcurrentPage(state, action: PayloadAction<number>) {
       state.currentPage = action.payload;
     },
-    setFilters(state, action) {
-      state.sort = action.payload.sort;
-      state.currentPage = Number(action.payload.currentPage);
-      state.categoryId = Number(action.payload.categoryId);
+
+    setFilters(state, action: PayloadAction<FilterSliceState>) {
+      // 	state.currentPage = Number(action.payload.currentPage);
+      //   state.sort = action.payload.sort;
+      //   state.categoryId = Number(action.payload.categoryId);
+      if (Object.keys(action.payload).length) {
+        state.currentPage = Number(action.payload.currentPage);
+        state.categoryId = Number(action.payload.categoryId);
+        state.sort = action.payload.sort;
+      } else {
+        state.currentPage = 1;
+        state.categoryId = 0;
+        state.sort = { name: "популярности", sortProperty: "rating" };
+      }
     },
   },
 });

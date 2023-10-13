@@ -1,16 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
-export const fetchItems = createAsyncThunk(
-  "items/fetchItemsStatus",
-  async ({ currentPage, category, sortProperty, search }) => {
-    const { data } = await axios.get(
-      `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currentPage}&limit=4&
-		${category}&sortBy=${sortProperty}&${search}`
-    );
-    return data;
-  }
-);
 
 type Item = {
   id: string;
@@ -22,37 +11,65 @@ type Item = {
   count: number;
 };
 
+export enum FetchStatus {
+  LOADING = "loading",
+  SUCCESS = "success",
+  ERROR = "error",
+}
+
 interface ItemsSliceState {
   items: Item[];
-  status: "loading" | "success" | "error";
+  status: FetchStatus;
 }
 
 const initialState: ItemsSliceState = {
   items: [],
-  status: "loading",
+  status: FetchStatus.LOADING,
 };
+
+type FetchItems = {
+  currentPage: string;
+  category: string;
+  sortProperty: string;
+  search: string;
+};
+
+export const fetchItems = createAsyncThunk<Item[], FetchItems>(
+  "items/fetchItemsStatus",
+  async (params) => {
+    const { currentPage, category, sortProperty, search } = params;
+    const { data } = await axios.get<Item[]>(
+      `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currentPage}&limit=4&
+		${category}&sortBy=${sortProperty}&${search}`
+    );
+    return data;
+  }
+);
 
 export const itemsSlice = createSlice({
   name: "items",
   initialState,
   reducers: {
-    setItems(state, action) {
+    setItems(state, action: PayloadAction<Item[]>) {
       state.items = action.payload;
     },
   },
-  extraReducers: {
-    [fetchItems.pending]: (state) => {
+
+  extraReducers: (builder) => {
+    builder.addCase(fetchItems.pending, (state) => {
       state.items = [];
-      state.status = "loading";
-    },
-    [fetchItems.fulfilled]: (state, action) => {
+      state.status = FetchStatus.LOADING;
+    });
+
+    builder.addCase(fetchItems.fulfilled, (state, action) => {
       state.items = action.payload;
-      state.status = "success";
-    },
-    [fetchItems.rejected]: (state) => {
+      state.status = FetchStatus.SUCCESS;
+    });
+
+    builder.addCase(fetchItems.rejected, (state) => {
       state.items = [];
-      state.status = "error";
-    },
+      state.status = FetchStatus.ERROR;
+    });
   },
 });
 
