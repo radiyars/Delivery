@@ -1,26 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectSort, setSortType } from "../redux/slices/filterSlice";
+import {
+  SORT_LIST,
+  Sort,
+  selectSort,
+  setSortType,
+} from "../redux/slices/filterSlice";
 import { ReactComponent as ArrowTopSvg } from "./../assets/img/arrow-top.svg";
 
-type SortItemProps = {
-  name: string;
-  sortProperty: string;
-};
+// type SortItemProps = {
+//   name: string;
+//   sortBy: string;
+// };
 
-export const sortList: SortItemProps[] = [
-  { name: "популярности", sortProperty: "rating" },
-  { name: "цене", sortProperty: "price" },
-  { name: "алфавиту", sortProperty: "title" },
-];
+// export const sortList: Sort[] = [
+//   { name: "популярности", sortBy: SortByEnum.RATING },
+//   { name: "цене", sortBy: SortByEnum.PRICE },
+//   { name: "алфавиту", sortBy: SortByEnum.TITLE },
+// ];
 
-const Sort = () => {
+const SortPopup = () => {
   const dispatch = useDispatch();
   const sortType = useSelector(selectSort);
   const [isOpenPopup, setIsOpenPopup] = useState(false);
   const sortRef = useRef<HTMLDivElement>(null);
 
-  const onClickSortItem = (obj: SortItemProps) => {
+  const onClickSortItem = (obj: Sort) => {
     dispatch(setSortType(obj));
     setIsOpenPopup(false);
   };
@@ -56,15 +61,13 @@ const Sort = () => {
       {isOpenPopup && (
         <div className="sort__popup">
           <ul>
-            {sortList.map((obj, index) => (
+            {SORT_LIST.map((obj, index) => (
               <li
                 key={index}
                 onClick={() => {
                   onClickSortItem(obj);
                 }}
-                className={
-                  sortType.sortProperty === obj.sortProperty ? "active" : ""
-                }
+                className={sortType.sortBy === obj.sortBy ? "active" : ""}
               >
                 {obj.name}
               </li>
@@ -76,4 +79,4 @@ const Sort = () => {
   );
 };
 
-export default Sort;
+export default SortPopup;

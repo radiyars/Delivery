@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import CartItem from "../сomponents/CartItem";
+import CartItemBLock from "../сomponents/CartItem";
 import { ReactComponent as CartSvg } from "./../assets/img/cart.svg";
 import { ReactComponent as LeftArrow } from "./../assets/img/grey-arrow-left.svg";
 import { ReactComponent as TrashSvg } from "./../assets/img/trash.svg";
@@ -35,7 +35,7 @@ const Cart: React.FC = () => {
         </div>
         <div className="content__items">
           {items.map((item: any) => (
-            <CartItem key={item.id} {...item} />
+            <CartItemBLock key={item.id} {...item} />
           ))}
         </div>
         <div className="cart__bottom">

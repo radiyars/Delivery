@@ -1,27 +1,30 @@
 import qs from "qs";
 import { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  FilterSliceState,
+  SORT_LIST,
   selectFilters,
   selectItemsData,
   setFilters,
   setcurrentPage,
 } from "../redux/slices/filterSlice";
-import { fetchItems } from "../redux/slices/itemsSlice";
+import { FetchItems, fetchItems } from "../redux/slices/itemsSlice";
+import { useAppDispatch } from "../redux/store";
 import Categories from "../сomponents/Categories";
-import Pagination from "../сomponents/Pagination/Pagination";
-import Sort, { sortList } from "../сomponents/Sort";
 import ItemBlock from "../сomponents/ItemBlock/ItemBlock";
 import Skeleton from "../сomponents/ItemBlock/Skeleton";
+import Pagination from "../сomponents/Pagination/Pagination";
+import SortPopup from "../сomponents/Sort";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isSearch = useRef(false);
   const isMounted = useRef(false);
 
-  const { categoryId, sortType, searchText, currentPage } =
+  const { categoryId, sort, searchText, currentPage } =
     useSelector(selectFilters);
   const { items, status } = useSelector(selectItemsData);
 
@@ -30,11 +33,10 @@ const Home: React.FC = () => {
     const search = searchText ? `search=${searchText}` : "";
 
     dispatch(
-      // @ts-ignore
       fetchItems({
-        currentPage,
-        category,
-        sortProperty: sortType.sortProperty,
+        currentPage: String(currentPage),
+        categoryId: category,
+        sortProperty: sort.sortBy,
         search,
       })
     );
@@ -45,25 +47,40 @@ const Home: React.FC = () => {
   // Если это не первый рендер, то подготоавливаем адресную строку с помощью библиотеки "qs"
   useEffect(() => {
     if (isMounted.current) {
-      const queryString = qs.stringify({
-        sortProperty: sortType.sortProperty,
-        categoryId,
-        currentPage: currentPage,
-      });
+      const queryString = qs.stringify(
+        {
+          sortProperty: sort.sortBy,
+          categoryId,
+          currentPage: currentPage,
+        },
+        { skipNulls: true }
+      );
       navigate(`?${queryString}`);
+
+      if (!window.location.search) {
+        dispatch(fetchItems({} as FetchItems));
+      }
     }
     // Первый рендер - ок!
     isMounted.current = true;
-  }, [categoryId, sortType.sortProperty, currentPage]);
+  }, [categoryId, sort.sortBy, currentPage]);
 
   // Если при первом рендере получили данные из адресной строчки, то парсим параметры филтрации в редакс
   useEffect(() => {
     if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1));
-      const sort = sortList.find(
-        (obj) => obj.sortProperty === params.sortProperty
+      const params = qs.parse(
+        window.location.search.substring(1)
+      ) as unknown as FetchItems;
+      const sort = SORT_LIST.find((obj) => obj.sortBy === params.sortProperty);
+
+      dispatch(
+        setFilters({
+          searchText: params.search,
+          categoryId: Number(params.categoryId),
+          currentPage: Number(params.currentPage),
+          sort: sort || SORT_LIST[0],
+        })
       );
-      dispatch(setFilters({ ...params, sort }));
     }
     isSearch.current = true;
   }, []);
@@ -77,7 +94,7 @@ const Home: React.FC = () => {
     // }
 
     isSearch.current = false;
-  }, [categoryId, sortType.sortProperty, searchText, currentPage]);
+  }, [categoryId, sort.sortBy, searchText, currentPage]);
 
   const onChangePage = (page: number) => {
     dispatch(setcurrentPage(page));
@@ -87,7 +104,7 @@ const Home: React.FC = () => {
     <div className="container">
       <div className="content__top">
         <Categories />
-        <Sort />
+        <SortPopup />
       </div>
       <h2 className="content__title">Все пиццы</h2>
 

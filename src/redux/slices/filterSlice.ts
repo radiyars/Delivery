@@ -1,15 +1,27 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-type Sort = {
+// export enum SortByEnum {
+//   RATING = "rating",
+//   PRICE = "price",
+//   TITLE = "title",
+// }
+
+export type Sort = {
   name: string;
-  sortProperty: "rating" | "price" | "title";
+  sortBy: string;
 };
 
-interface FilterSliceState {
+export const SORT_LIST: Sort[] = [
+  { name: "популярности", sortBy: "rating" },
+  { name: "цене", sortBy: "price" },
+  { name: "алфавиту", sortBy: "title" },
+];
+
+export interface FilterSliceState {
+  currentPage: number;
   searchText: string;
   categoryId: number;
-  currentPage: number;
   sort: Sort;
 }
 
@@ -18,8 +30,8 @@ const initialState: FilterSliceState = {
   categoryId: 0,
   currentPage: 1,
   sort: {
-    name: "популярности",
-    sortProperty: "price",
+    name: SORT_LIST[0].name,
+    sortBy: SORT_LIST[0].sortBy,
   },
 };
 
@@ -54,7 +66,10 @@ export const filterSlice = createSlice({
       } else {
         state.currentPage = 1;
         state.categoryId = 0;
-        state.sort = { name: "популярности", sortProperty: "rating" };
+        state.sort = {
+          name: SORT_LIST[0].name,
+          sortBy: SORT_LIST[0].sortBy,
+        };
       }
     },
   },

@@ -27,20 +27,22 @@ const initialState: ItemsSliceState = {
   status: FetchStatus.LOADING,
 };
 
-type FetchItems = {
+// export type SearchItemParams = { currentPage; category; sortProperty; search };
+
+export type FetchItems = {
   currentPage: string;
-  category: string;
-  sortProperty: string;
+  categoryId: string;
   search: string;
+  sortProperty: string;
 };
 
 export const fetchItems = createAsyncThunk<Item[], FetchItems>(
   "items/fetchItemsStatus",
   async (params) => {
-    const { currentPage, category, sortProperty, search } = params;
+    const { currentPage, categoryId, sortProperty, search } = params;
     const { data } = await axios.get<Item[]>(
       `https://64dc883ce64a8525a0f6a48c.mockapi.io/items?page=${currentPage}&limit=4&
-		${category}&sortBy=${sortProperty}&${search}`
+		${categoryId}&sortBy=${sortProperty}&${search}`
     );
     return data;
   }
