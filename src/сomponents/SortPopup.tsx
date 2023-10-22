@@ -1,24 +1,10 @@
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  SORT_LIST,
-  Sort,
-  selectSort,
-  setSortType,
-} from "../redux/slices/filterSlice";
 import { ReactComponent as ArrowTopSvg } from "./../assets/img/arrow-top.svg";
-
-// type SortItemProps = {
-//   name: string;
-//   sortBy: string;
-// };
-
-// export const sortList: Sort[] = [
-//   { name: "популярности", sortBy: SortByEnum.RATING },
-//   { name: "цене", sortBy: SortByEnum.PRICE },
-//   { name: "алфавиту", sortBy: SortByEnum.TITLE },
-// ];
+import { selectSort } from "../redux/filter/selectors";
+import { setSortType } from "../redux/filter/slice";
+import { SORT_LIST, Sort } from "../redux/filter/types";
 
 type PopupClick = MouseEvent & {
   path: Node[];

@@ -4,8 +4,9 @@ import CartItemBLock from "../сomponents/CartItem";
 import { ReactComponent as CartSvg } from "./../assets/img/cart.svg";
 import { ReactComponent as LeftArrow } from "./../assets/img/grey-arrow-left.svg";
 import { ReactComponent as TrashSvg } from "./../assets/img/trash.svg";
-import { clearItems, selectCart } from "../redux/slices/cartSlice";
+import { clearItems } from "../redux/cart/slice";
 import CartEmpty from "../сomponents/CartEmpty";
+import { selectCart } from "../redux/cart/selectors";
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch();

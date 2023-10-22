@@ -2,21 +2,16 @@ import qs from "qs";
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  FilterSliceState,
-  SORT_LIST,
-  selectFilters,
-  selectItemsData,
-  setFilters,
-  setcurrentPage,
-} from "../redux/slices/filterSlice";
-import { FetchItems, fetchItems } from "../redux/slices/itemsSlice";
 import { useAppDispatch } from "../redux/store";
 import Categories from "../сomponents/Categories";
 import ItemBlock from "../сomponents/ItemBlock/ItemBlock";
 import Skeleton from "../сomponents/ItemBlock/Skeleton";
 import Pagination from "../сomponents/Pagination/Pagination";
 import SortPopup from "../сomponents/SortPopup";
+
+import { selectFilters, selectItemsData } from "../redux/filter/selectors";
+import { fetchItems } from "../redux/item/asyncActions";
+import { setcurrentPage } from "../redux/filter/slice";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -99,8 +94,6 @@ const Home: React.FC = () => {
   const onChangePage = (page: number) => {
     dispatch(setcurrentPage(page));
   };
-
-  console.log("items: ", items);
 
   return (
     <div className="container">

@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchText } from "../../redux/slices/filterSlice";
 import { ReactComponent as CloseSvg } from "./../../assets/img/close.svg";
 import { ReactComponent as SearchSvg } from "./../../assets/img/search.svg";
 import styles from "./Search.module.scss";
 import { useCallback, useRef, useState } from "react";
 import debounce from "lodash.debounce";
+import { setSearchText } from "../../redux/filter/slice";
 
 const Search: React.FC = () => {
   const [inputText, setInputText] = useState("");
