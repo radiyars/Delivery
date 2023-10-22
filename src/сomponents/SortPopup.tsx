@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,7 +20,11 @@ import { ReactComponent as ArrowTopSvg } from "./../assets/img/arrow-top.svg";
 //   { name: "алфавиту", sortBy: SortByEnum.TITLE },
 // ];
 
-const SortPopup = () => {
+type PopupClick = MouseEvent & {
+  path: Node[];
+};
+
+const SortPopup: React.FC = React.memo(() => {
   const dispatch = useDispatch();
   const sortType = useSelector(selectSort);
   const [isOpenPopup, setIsOpenPopup] = useState(false);
@@ -32,16 +37,12 @@ const SortPopup = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const _event = event as MouseEvent & {
-        path: Node[];
-      };
-      if (sortRef.current && !_event.path.includes(sortRef.current)) {
+      const _event = event as PopupClick;
+      if (sortRef.current && !_event.composedPath().includes(sortRef.current)) {
         setIsOpenPopup(false);
       }
     };
-
     document.body.addEventListener("click", handleClickOutside);
-
     return () => document.body.removeEventListener("click", handleClickOutside);
   }, []);
 
@@ -77,6 +78,6 @@ const SortPopup = () => {
       )}
     </div>
   );
-};
+});
 
 export default SortPopup;

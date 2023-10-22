@@ -16,7 +16,7 @@ import Categories from "../сomponents/Categories";
 import ItemBlock from "../сomponents/ItemBlock/ItemBlock";
 import Skeleton from "../сomponents/ItemBlock/Skeleton";
 import Pagination from "../сomponents/Pagination/Pagination";
-import SortPopup from "../сomponents/Sort";
+import SortPopup from "../сomponents/SortPopup";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -44,46 +44,46 @@ const Home: React.FC = () => {
     window.scrollTo(0, 0);
   };
 
-  // Если это не первый рендер, то подготоавливаем адресную строку с помощью библиотеки "qs"
-  useEffect(() => {
-    if (isMounted.current) {
-      const queryString = qs.stringify(
-        {
-          sortProperty: sort.sortBy,
-          categoryId,
-          currentPage: currentPage,
-        },
-        { skipNulls: true }
-      );
-      navigate(`?${queryString}`);
+  //! Если это не первый рендер, то подготоавливаем адресную строку с помощью библиотеки "qs"
+  //   useEffect(() => {
+  //     if (isMounted.current) {
+  //       const queryString = qs.stringify(
+  //         {
+  //           sortProperty: sort.sortBy,
+  //           categoryId,
+  //           currentPage: currentPage,
+  //         },
+  //         { skipNulls: true }
+  //       );
+  //       navigate(`?${queryString}`);
 
-      if (!window.location.search) {
-        dispatch(fetchItems({} as FetchItems));
-      }
-    }
-    // Первый рендер - ок!
-    isMounted.current = true;
-  }, [categoryId, sort.sortBy, currentPage]);
+  //       if (!window.location.search) {
+  //         dispatch(fetchItems({} as FetchItems));
+  //       }
+  //     }
+  //     // Первый рендер - ок!
+  //     isMounted.current = true;
+  //   }, [categoryId, sort.sortBy, currentPage]);
 
-  // Если при первом рендере получили данные из адресной строчки, то парсим параметры филтрации в редакс
-  useEffect(() => {
-    if (window.location.search) {
-      const params = qs.parse(
-        window.location.search.substring(1)
-      ) as unknown as FetchItems;
-      const sort = SORT_LIST.find((obj) => obj.sortBy === params.sortProperty);
+  //! Если при первом рендере получили данные из адресной строчки, то парсим параметры филтрации в редакс
+  //   useEffect(() => {
+  //     if (window.location.search) {
+  //       const params = qs.parse(
+  //         window.location.search.substring(1)
+  //       ) as unknown as FetchItems;
+  //       const sort = SORT_LIST.find((obj) => obj.sortBy === params.sortProperty);
 
-      dispatch(
-        setFilters({
-          searchText: params.search,
-          categoryId: Number(params.categoryId),
-          currentPage: Number(params.currentPage),
-          sort: sort || SORT_LIST[0],
-        })
-      );
-    }
-    isSearch.current = true;
-  }, []);
+  //       dispatch(
+  //         setFilters({
+  //           searchText: params.search,
+  //           categoryId: Number(params.categoryId),
+  //           currentPage: Number(params.currentPage),
+  //           sort: sort || SORT_LIST[0],
+  //         })
+  //       );
+  //     }
+  //     isSearch.current = true;
+  //   }, []);
 
   // При первом рендере запрашиваем пиццы.
   useEffect(() => {
@@ -99,6 +99,8 @@ const Home: React.FC = () => {
   const onChangePage = (page: number) => {
     dispatch(setcurrentPage(page));
   };
+
+  console.log("items: ", items);
 
   return (
     <div className="container">
@@ -117,11 +119,7 @@ const Home: React.FC = () => {
         <div className="content__items">
           {status === "loading"
             ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
-            : items.map((obj: any) => (
-                <Link key={obj.id} to={`/item/${obj.id}`}>
-                  <ItemBlock {...obj} />
-                </Link>
-              ))}
+            : items.map((obj: any) => <ItemBlock key={obj.id} {...obj} />)}
         </div>
       )}
       <Pagination onChangePage={onChangePage} currentPage={currentPage} />

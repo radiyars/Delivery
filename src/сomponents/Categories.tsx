@@ -1,3 +1,5 @@
+import React from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import { setCategoryId } from "../redux/slices/filterSlice";
 
@@ -10,7 +12,7 @@ const categories = [
   "Закрытые",
 ];
 
-const Categories: React.FC = () => {
+const Categories: React.FC = React.memo(() => {
   const categoryId = useSelector((state: any) => state.filters.categoryId);
   const dispatch = useDispatch();
 
@@ -29,6 +31,6 @@ const Categories: React.FC = () => {
       </ul>
     </div>
   );
-};
+});
 
 export default Categories;
